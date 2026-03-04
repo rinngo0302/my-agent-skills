@@ -56,6 +56,7 @@ mcp__claude-in-chrome__computer  action="screenshot"
 ## ステップ3: インラインコメントの投稿
 
 指摘リストを上から順に1件ずつ投稿する。
+座標の直指定は原則禁止とし、`find` で要素を特定して `ref` クリックを最優先する（座標クリックは最後の手段）。
 
 ### 3-1. 対象行を探す
 
@@ -70,15 +71,18 @@ mcp__claude-in-chrome__find  query="ファイル名 または 行内容のキー
 mcp__claude-in-chrome__computer  action="scroll"  coordinate=[760, 400]  scroll_direction="down"
 ```
 
+`find → スクロール → 再find` を最大3回繰り返しても見つからない場合は、スクリーンショット付きでユーザーに報告して中断する。
+
 ### 3-2. 「+」ボタンを表示してクリック
 
 ```
-# 行番号付近にホバーして「+」を出す
-mcp__claude-in-chrome__computer  action="hover"  coordinate=[行番号の x, y]
+# 行番号付近の要素を find で特定してホバーし、「+」を出す
+mcp__claude-in-chrome__find  query="対象行のテキスト または 行番号"
+mcp__claude-in-chrome__computer  action="hover"  ref="行要素の ref"
 
-# スクリーンショットで「+」の位置を確認してからクリック
-mcp__claude-in-chrome__computer  action="screenshot"
-mcp__claude-in-chrome__computer  action="left_click"  coordinate=[+ボタンの x, y]
+# 「+」ボタンを find して ref クリック（座標クリックは最後の手段）
+mcp__claude-in-chrome__find  query="Add comment"
+mcp__claude-in-chrome__computer  action="left_click"  ref="+ボタンの ref"
 ```
 
 ### 3-3. コメントを入力する
@@ -156,10 +160,11 @@ mcp__claude-in-chrome__computer  action="left_click"  ref="..."
 
 - コメントの内容はユーザーが決めたものをそのまま投稿する（勝手に改変しない）
 - 各操作の前後でスクリーンショットを撮って状態を確認する
-- 「+」ボタンが出ない場合は行番号付近を再ホバーする
+- 「+」ボタンが出ない場合は行番号付近を再ホバーし、`find` で再取得する
 - `Submit review` は必ずユーザー最終確認の後に実行する
 - UI 操作に3回失敗した場合はユーザーに報告して中断する
 - LGTM で Approve する場合の総評は `:+1:` と `LGTMです！` をそのまま使う
+- 座標クリックは原則禁止。`find` + `ref` で失敗した場合のみ最後の手段として使う
 
 ## 禁止事項
 
