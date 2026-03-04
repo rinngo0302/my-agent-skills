@@ -75,12 +75,15 @@ mcp__claude-in-chrome__computer  action="scroll"  coordinate=[760, 400]  scroll_
 
 ### 3-2. 「+」ボタンを表示してクリック
 
+**重要**: `+` ボタンは hover state でのみ DOM に現れる。hover → 即 find → ref クリック の順を崩さないこと。
+hover 後にマウスを大きく動かすと hover state が外れてボタンが消えるため、座標クリックは厳禁。
+
 ```
-# 行番号付近の要素を find で特定してホバーし、「+」を出す
+# 1. 行番号付近の要素を find で特定してホバーし、「+」を出す
 mcp__claude-in-chrome__find  query="対象行のテキスト または 行番号"
 mcp__claude-in-chrome__computer  action="hover"  ref="行要素の ref"
 
-# 「+」ボタンを find して ref クリック（座標クリックは最後の手段）
+# 2. hover 直後（マウスを動かす前）に find で「+」ボタンの ref を取得してクリック
 mcp__claude-in-chrome__find  query="Add comment"
 mcp__claude-in-chrome__computer  action="left_click"  ref="+ボタンの ref"
 ```
@@ -96,6 +99,32 @@ mcp__claude-in-chrome__computer  action="left_click"  ref="テキストエリア
 # 返信コメントでは、先頭で返信先ユーザー名を必ずメンションする（例: "@octocat コメント本文"）
 mcp__claude-in-chrome__computer  action="type"  text="@返信先ユーザー名 コメント本文"
 ```
+
+#### マークダウンリストを含むコメントの入力方法
+
+**注意**: GitHub のマークダウンエディタはリスト内で Enter を押すと次の行に `- ` を自動追加する。
+`type` で全テキストを一度に入力すると改行のたびに `- ` が重複してネストした箇条書きになる。
+
+正しい入力手順：
+1. 最初のリスト項目のみ `- 内容` で type する
+2. Enter を押す（GitHub が次の行に `- ` を自動追加する）
+3. 以降の項目は `- ` を打たずにコンテンツだけ type する
+
+```
+# 例: 5項目のリストを入力する場合
+mcp__claude-in-chrome__computer  action="type"  text="本文（リスト前の説明）"
+mcp__claude-in-chrome__computer  action="key"   text="Return Return"
+mcp__claude-in-chrome__computer  action="type"  text="- 1番目の項目"    # ← 最初だけ「- 」を自分で入力
+mcp__claude-in-chrome__computer  action="key"   text="Return"            # GitHub が「- 」を自動追加
+mcp__claude-in-chrome__computer  action="type"  text="2番目の項目"       # ← 「- 」は打たない
+mcp__claude-in-chrome__computer  action="key"   text="Return"
+mcp__claude-in-chrome__computer  action="type"  text="3番目の項目"
+# ... 以降同様
+mcp__claude-in-chrome__computer  action="key"   text="Return Return"     # リスト終了（空行2つ）
+mcp__claude-in-chrome__computer  action="type"  text="締めの文"
+```
+
+入力後は必ず Preview タブで表示を確認してから送信すること。
 
 ### 3-4. レビューに追加する
 
