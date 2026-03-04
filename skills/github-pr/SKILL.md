@@ -164,7 +164,7 @@ mcp__claude-in-chrome__computer  action="left_click"  ref="..."
 mcp__claude-in-chrome__find  query="review summary text area"
 mcp__claude-in-chrome__computer  action="left_click"  ref="..."
 # 例:
-# - LGTM で Approve: text=":+1:\nLGTMです！"
+# - Approve: text=":+1:\nLGTMです！"
 # - それ以外: text="総評テキスト"
 mcp__claude-in-chrome__computer  action="type"  text="..."
 
@@ -192,7 +192,7 @@ mcp__claude-in-chrome__computer  action="left_click"  ref="..."
 - 「+」ボタンが出ない場合は行番号付近を再ホバーし、`find` で再取得する
 - `Submit review` は必ずユーザー最終確認の後に実行する
 - UI 操作に3回失敗した場合はユーザーに報告して中断する
-- LGTM で Approve する場合の総評は `:+1:` と `LGTMです！` をそのまま使う
+- Approve する場合の総評は `:+1:` と `LGTMです！` をそのまま使う
 - 座標クリックは原則禁止。`find` + `ref` で失敗した場合のみ最後の手段として使う
 
 ## 禁止事項
