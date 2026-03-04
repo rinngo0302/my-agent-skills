@@ -6,7 +6,8 @@
 
 | スキル | 説明 |
 |--------|------|
-| `code-review` | staged/unstaged の変更または PR の差分を日本語でレビューする |
+| `code-review` | 自分の staged/unstaged 変更または PR の差分を日本語でレビューする |
+| `pr-review` | ユーザーが決めたレビュー指摘を Claude in Chrome で GitHub PR にインラインコメント投稿する |
 
 ## 使い方
 
