@@ -20,11 +20,15 @@ compatibility: "Claude in Chrome MCP が必要。"
 
 - **PR の URL または番号**（例: `#123` / `https://github.com/org/repo/pull/123`）
 - **指摘リスト**（ファイルパス・行番号・コメント内容）
+- **返信する相手のユーザー名**（例: `@octocat`。返信コメントがある場合は必須）
+
+補足: このスキルに専用の引数定義はないため、必要情報は会話内で渡してもらう（例: `返信先ユーザー名: @octocat`）。
 
 投稿前に指摘リストをユーザーに一覧表示して最終確認を取る：
 
 ```
 PR: owner/repo#123  件数: 3件
+返信先ユーザー名: @octocat
 
 1. src/app.ts:42  — 「この分岐は early return にすると読みやすいです」
 2. src/utils.ts:88 — 「N+1 クエリが発生しています」
@@ -85,7 +89,8 @@ mcp__claude-in-chrome__find  query="comment text area"
 mcp__claude-in-chrome__computer  action="left_click"  ref="テキストエリアの ref"
 
 # コメントを入力
-mcp__claude-in-chrome__computer  action="type"  text="コメント本文"
+# 返信コメントでは、先頭で返信先ユーザー名を必ずメンションする（例: "@octocat コメント本文"）
+mcp__claude-in-chrome__computer  action="type"  text="@返信先ユーザー名 コメント本文"
 ```
 
 ### 3-4. レビューに追加する
@@ -118,12 +123,20 @@ UI 操作が失敗した場合は、次の順で再試行する。
 mcp__claude-in-chrome__find  query="Finish your review"
 mcp__claude-in-chrome__computer  action="left_click"  ref="..."
 
-# 総評を入力（ユーザーから受け取った内容。なければ空欄）
+# 総評を入力
+# - Approve（LGTM）の場合は固定で以下をそのまま入力:
+#   :+1:
+#   LGTMです！
+# - それ以外はユーザーから受け取った内容（なければ空欄）
 mcp__claude-in-chrome__find  query="review summary text area"
 mcp__claude-in-chrome__computer  action="left_click"  ref="..."
-mcp__claude-in-chrome__computer  action="type"  text="総評テキスト"
+# 例:
+# - LGTM で Approve: text=":+1:\nLGTMです！"
+# - それ以外: text="総評テキスト"
+mcp__claude-in-chrome__computer  action="type"  text="..."
 
 # レビュー種別を選択（Comment / Approve / Request changes）
+# - LGTM の場合は必ず Approve を選択
 mcp__claude-in-chrome__find  query="Request changes radio"
 mcp__claude-in-chrome__computer  action="left_click"  ref="..."
 
@@ -146,6 +159,7 @@ mcp__claude-in-chrome__computer  action="left_click"  ref="..."
 - 「+」ボタンが出ない場合は行番号付近を再ホバーする
 - `Submit review` は必ずユーザー最終確認の後に実行する
 - UI 操作に3回失敗した場合はユーザーに報告して中断する
+- LGTM で Approve する場合の総評は `:+1:` と `LGTMです！` をそのまま使う
 
 ## 禁止事項
 
