@@ -21,7 +21,7 @@ git clone https://github.com/rinngo0302/my-agent-skills ~/Project/my-agent-skill
 
 # ~/.claude/skills/ にシンボリックリンクを作成
 mkdir -p ~/.claude/skills
-ln -s ~/Project/my-agent-skills/code-review ~/.claude/skills/code-review
+ln -s ~/Project/my-agent-skills/skills ~/.claude/
 ```
 
 以降は Claude Code を起動するだけでどのプロジェクトからでもスキルが使える。
@@ -30,12 +30,12 @@ ln -s ~/Project/my-agent-skills/code-review ~/.claude/skills/code-review
 
 ```bash
 # 作業リポジトリのルートで実行
-ln -s ~/Project/my-agent-skills/code-review .claude/skills/code-review
+ln -s ~/Project/my-agent-skills/skills .claude/skills
 ```
 
 ### シンボリックリンクの確認・削除
 
 ```bash
-ls -la ~/.claude/skills/code-review    # 確認（グローバル）
-rm ~/.claude/skills/code-review        # 削除（グローバル）
+ls -la ~/.claude/skills    # 確認（グローバル）
+rm ~/.claude/skills        # 削除（グローバル）
 ```
