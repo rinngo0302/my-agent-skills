@@ -47,8 +47,8 @@ worktree の作成が完了したら、各 worktree に対して iTerm2 の新�
 ```bash
 osascript <<EOF
 tell application "iTerm2"
-    create window with default profile
     tell current window
+        create tab with default profile
         tell current session
             write text "cd [WORKTREE_ABSOLUTE_PATH] && claude"
         end tell
@@ -60,7 +60,7 @@ EOF
 全ブランチ分の起動が完了したら、以下のメッセージを出力する:
 
 ```
-各ブランチの iTerm2 ウィンドウを起動しました。
+各ブランチの iTerm2 タブを起動しました。
 
 - [BRANCH_NAME_1]: [WORKTREE_ABSOLUTE_PATH_1]
 - [BRANCH_NAME_2]: [WORKTREE_ABSOLUTE_PATH_2]
