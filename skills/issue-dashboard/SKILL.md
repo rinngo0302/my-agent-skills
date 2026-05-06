@@ -182,7 +182,7 @@ EOF
 
 ### 4-2. 子issueを作成してSub-issueとして紐付け
 
-テーマグループごとに子issueを作成し、`scripts/link_subissue.sh` で親に紐付ける。さらに元issueを子issueのSub-issueとして紐付ける:
+テーマグループごとに子issueを作成し、`scripts/link_subissue.sh` で親に紐付ける:
 
 ```bash
 CHILD_URL=$(gh issue create \
@@ -203,13 +203,8 @@ EOF
 
 # 親issueのSub-issueとして登録
 bash ~/Project/my-agent-skills/skills/issue-dashboard/scripts/link_subissue.sh "$PARENT_URL" "$CHILD_URL"
-
-# このテーマに属する元issueを子issueのSub-issueとして登録
-# link_subissue.sh はクロスリポジトリ対応（node_id経由）なので元issueのURLをそのまま渡せる
-for ORIGINAL_ISSUE_URL in {このテーマの元issueURL一覧}; do
-  bash ~/Project/my-agent-skills/skills/issue-dashboard/scripts/link_subissue.sh "$CHILD_URL" "$ORIGINAL_ISSUE_URL"
-done
 ```
+
 
 ### 4-3. 完了報告
 
@@ -219,15 +214,11 @@ done
 ✅ 登録完了
 
 📦 owner/repo → {PARENT_URL}
-  └─ ログイン・認証 → {CHILD_URL_1}
-       └─ #12: Fix OAuth token expiry (Sub-issue リンク済み)
-       └─ #18: Session management bug (Sub-issue リンク済み)
-  └─ ダッシュボード → {CHILD_URL_2}
-       └─ #7: Dark mode implementation (Sub-issue リンク済み)
+  └─ ログイン・認証     → {CHILD_URL_1}
+  └─ ダッシュボード     → {CHILD_URL_2}
 
 📦 owner/repo2 → {PARENT_URL_2}
   └─ 開発者向けドキュメント → {CHILD_URL_3}
-       └─ #5: Add API reference (Sub-issue リンク済み)
 ```
 
 ## Step 5: クローズ確認（フォローアップ）
