@@ -48,15 +48,33 @@ gh label list --json name,description --limit 100
 
 ## Step 1.5: 除外リポジトリの選択
 
+**設定ファイルの読み込み:**
+
+まず前回の除外設定を読み込む:
+
+```bash
+cat ~/Project/my-agent-skills/skills/issue-dashboard/excluded_repos.json 2>/dev/null || echo '[]'
+```
+
 取得したissueからユニークなリポジトリ名一覧を抽出し、リポジトリが2件以上ある場合は `AskUserQuestion` で除外するリポジトリを選択させる。
 
 - `multiSelect: true` で複数選択可能にする
-- 選択肢はユニークなリポジトリ名（最大4件まで表示）
-- リポジトリが5件以上ある場合は件数が多い順に上位4件を表示し、残りは自動追加される "Other" に自由入力してもらう
-- 質問文の例: 「除外するリポジトリを選択してください（不要なら何も選択せず続けてください）」
+- 選択肢は**全てのユニークなリポジトリ名**（件数制限なし）
+- 設定ファイルに保存済みのリポジトリは `defaultValues` にセットし、デフォルト選択状態にする
+- 質問文の例: 「除外するリポジトリを選択してください（前回の設定がデフォルトで選択されています）」
 - 選択されたリポジトリのissueは以降のステップで除外する
 
-リポジトリが1件のみの場合はこのステップをスキップする。
+**設定ファイルへの保存:**
+
+選択結果（空配列含む）を必ず保存する:
+
+```bash
+# 例: owner/repo1 と owner/repo2 を除外する場合
+echo '["owner/repo1", "owner/repo2"]' \
+  > ~/Project/my-agent-skills/skills/issue-dashboard/excluded_repos.json
+```
+
+リポジトリが1件のみの場合はこのステップをスキップする（ただし設定ファイルは読み込む）。
 
 ## Step 2: ターミナルへの一覧表示
 
@@ -164,7 +182,7 @@ EOF
 
 ### 4-2. 子issueを作成してSub-issueとして紐付け
 
-テーマグループごとに子issueを作成し、`scripts/link_subissue.sh` で親に紐付ける:
+テーマグループごとに子issueを作成し、`scripts/link_subissue.sh` で親に紐付ける。さらに元issueを子issueのSub-issueとして紐付ける:
 
 ```bash
 CHILD_URL=$(gh issue create \
@@ -185,6 +203,12 @@ EOF
 
 # 親issueのSub-issueとして登録
 bash ~/Project/my-agent-skills/skills/issue-dashboard/scripts/link_subissue.sh "$PARENT_URL" "$CHILD_URL"
+
+# このテーマに属する元issueを子issueのSub-issueとして登録
+# link_subissue.sh はクロスリポジトリ対応（node_id経由）なので元issueのURLをそのまま渡せる
+for ORIGINAL_ISSUE_URL in {このテーマの元issueURL一覧}; do
+  bash ~/Project/my-agent-skills/skills/issue-dashboard/scripts/link_subissue.sh "$CHILD_URL" "$ORIGINAL_ISSUE_URL"
+done
 ```
 
 ### 4-3. 完了報告
@@ -195,11 +219,15 @@ bash ~/Project/my-agent-skills/skills/issue-dashboard/scripts/link_subissue.sh "
 ✅ 登録完了
 
 📦 owner/repo → {PARENT_URL}
-  └─ ログイン・認証     → {CHILD_URL_1}
-  └─ ダッシュボード     → {CHILD_URL_2}
+  └─ ログイン・認証 → {CHILD_URL_1}
+       └─ #12: Fix OAuth token expiry (Sub-issue リンク済み)
+       └─ #18: Session management bug (Sub-issue リンク済み)
+  └─ ダッシュボード → {CHILD_URL_2}
+       └─ #7: Dark mode implementation (Sub-issue リンク済み)
 
 📦 owner/repo2 → {PARENT_URL_2}
   └─ 開発者向けドキュメント → {CHILD_URL_3}
+       └─ #5: Add API reference (Sub-issue リンク済み)
 ```
 
 ## Step 5: クローズ確認（フォローアップ）
