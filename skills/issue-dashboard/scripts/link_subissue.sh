@@ -14,16 +14,17 @@ parse_issue() {
 }
 
 read -r P_OWNER P_REPO P_NUM <<< "$(parse_issue "$PARENT_URL")"
+read -r C_OWNER C_REPO C_NUM <<< "$(parse_issue "$CHILD_URL")"
 
-# Get parent issue node ID
+# Get node IDs for both issues
 PARENT_NODE_ID=$(gh api "repos/${P_OWNER}/${P_REPO}/issues/${P_NUM}" --jq '.node_id')
+CHILD_NODE_ID=$(gh api "repos/${C_OWNER}/${C_REPO}/issues/${C_NUM}" --jq '.node_id')
 
-# Link child as sub-issue using subIssueUrl (no need to fetch child node ID)
 gh api graphql -f query="
 mutation {
   addSubIssue(input: {
     issueId: \"${PARENT_NODE_ID}\"
-    subIssueUrl: \"${CHILD_URL}\"
+    subIssueId: \"${CHILD_NODE_ID}\"
   }) {
     issue { number }
     subIssue { number }

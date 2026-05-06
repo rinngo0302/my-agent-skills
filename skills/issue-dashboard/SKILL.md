@@ -10,11 +10,12 @@ description: 複数のGitHubリポジトリにまたがってアサインされ�
 ## ワークフロー
 
 ```
-Step 1: gh でアサインissueを全リポジトリから取得
-Step 2: ターミナルに一覧表示してユーザーに確認
-Step 3: Claudeがリポジトリ別・ドメイン別にグルーピング案を提示
-Step 4: ユーザー承認後、このリポジトリのissueに登録（重複チェックあり）
-Step 5: [フォローアップ] 元issueのクローズ状況を確認
+Step 1:   gh でアサインissueを全リポジトリから取得
+Step 1.5: 除外するリポジトリをユーザーに選択させる（複数選択可）
+Step 2:   ターミナルに一覧表示してユーザーに確認
+Step 3:   Claudeがリポジトリ別・ドメイン別にグルーピング案を提示
+Step 4:   ユーザー承認後、このリポジトリのissueに登録（重複チェックあり）
+Step 5:   [フォローアップ] 元issueのクローズ状況を確認
 ```
 
 **ドライランモード:** ユーザーが「ドライラン」「dry run」「確認だけ」と言った場合、Step 3 のグループ案表示で止める。Step 4 の issue 登録は行わない。
@@ -26,7 +27,7 @@ Step 5: [フォローアップ] 元issueのクローズ状況を確認
 **アサインissueを取得:**
 
 ```bash
-bash skills/issue-dashboard/scripts/fetch_issues.sh
+bash ~/Project/my-agent-skills/skills/issue-dashboard/scripts/fetch_issues.sh
 ```
 
 スクリプトが失敗した場合はフォールバックとして直接実行:
@@ -44,6 +45,18 @@ gh label list --json name,description --limit 100
 ```
 
 取得したラベル一覧を記憶しておく。Step 3 のラベル選定はこのリストの中からのみ行う。
+
+## Step 1.5: 除外リポジトリの選択
+
+取得したissueからユニークなリポジトリ名一覧を抽出し、リポジトリが2件以上ある場合は `AskUserQuestion` で除外するリポジトリを選択させる。
+
+- `multiSelect: true` で複数選択可能にする
+- 選択肢はユニークなリポジトリ名（最大4件まで表示）
+- リポジトリが5件以上ある場合は件数が多い順に上位4件を表示し、残りは自動追加される "Other" に自由入力してもらう
+- 質問文の例: 「除外するリポジトリを選択してください（不要なら何も選択せず続けてください）」
+- 選択されたリポジトリのissueは以降のステップで除外する
+
+リポジトリが1件のみの場合はこのステップをスキップする。
 
 ## Step 2: ターミナルへの一覧表示
 
@@ -171,7 +184,7 @@ EOF
 )")
 
 # 親issueのSub-issueとして登録
-bash skills/issue-dashboard/scripts/link_subissue.sh "$PARENT_URL" "$CHILD_URL"
+bash ~/Project/my-agent-skills/skills/issue-dashboard/scripts/link_subissue.sh "$PARENT_URL" "$CHILD_URL"
 ```
 
 ### 4-3. 完了報告
@@ -196,7 +209,7 @@ bash skills/issue-dashboard/scripts/link_subissue.sh "$PARENT_URL" "$CHILD_URL"
 `scripts/check_closed.sh` を実行して、ダッシュボードissueに記載された元issueの現在ステータスを一括チェックする:
 
 ```bash
-bash skills/issue-dashboard/scripts/check_closed.sh
+bash ~/Project/my-agent-skills/skills/issue-dashboard/scripts/check_closed.sh
 ```
 
 出力例:
