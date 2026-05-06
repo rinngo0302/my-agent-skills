@@ -215,6 +215,15 @@ bash skills/issue-dashboard/scripts/check_closed.sh
 
 クローズ済み元issueが見つかった場合、対応するダッシュボードissueのチェックボックスを更新するかユーザーに確認する。
 
+## ユーザーへの質問
+
+ユーザーに選択や確認を求める場面では必ず `AskUserQuestion` ツールを使う。該当する場面:
+
+- Step 2: グルーピングして登録するか確認するとき
+- Step 3: グループ名・ラベルの変更・統合・分割の希望を確認するとき
+- Step 4-0: 重複issueが見つかったとき（更新 or スキップの選択）
+- Step 5: クローズ済み元issueに対応するダッシュボードissueを更新するか確認するとき
+
 ## 注意事項
 
 - `gh auth status` でGitHub認証済みであることを確認してから実行する
