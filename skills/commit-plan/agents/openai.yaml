@@ -1,0 +1,4 @@
+interface:
+  display_name: "Commit Plan"
+  short_description: "Plan and create reviewable atomic Git commits"
+  default_prompt: "Use $commit-plan to split my staged changes into reviewable commits."
