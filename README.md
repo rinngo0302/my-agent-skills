@@ -1,15 +1,21 @@
 # my-agent-skills
 
-個人用の Claude Code スキル集。
+Claude Code と Codex で使う個人用スキル集。
 
 ## スキル一覧
 
-| スキル | 説明 |
-|--------|------|
-| `code-review` | 自分の staged/unstaged 変更または PR の差分を日本語でレビューする |
-| `github-pr` | ユーザーが決めたレビュー指摘を Claude in Chrome で GitHub PR にインラインコメント投稿する |
-| `pr-summary` | 現在の変更をコミットし、PR本文（作成せずテキストのみ）を生成する |
-| `multi-pr-review` | 複数のブランチを git worktree で並列展開し、同時にコードレビューする |
+| スキル | 対応環境 | 説明 |
+|--------|----------|------|
+| `code-review` | Claude / Codex | 自分の staged/unstaged 変更または PR の差分を日本語でレビューする |
+| `pr-summary` | Claude / Codex | PR本文を生成する（PRは作成せず、本文テキストのみ） |
+| `sim-use` | Claude / Codex | iOS Simulator / Android Emulator・実機を操作する |
+| `grilling` | Claude / Codex | 計画・判断・アイデアを設計ツリーで深掘りする |
+| `commit-plan` | Claude / Codex | staged差分をレビューしやすい複数コミットへ分割し、承認後に作成する |
+| `github-pr` | Claude のみ | ユーザーが決めたレビュー指摘を Claude in Chrome で GitHub PR にインラインコメント投稿する |
+| `issue-dashboard` | 対象外 | 複数リポジトリのアサイン issue を集約・管理する |
+| `multi-pr-review` | Claude のみ | 複数のブランチを git worktree で並列展開し、同時にコードレビューする |
+
+`github-pr`、`issue-dashboard`、`multi-pr-review` の Codex 対応は今回の対象外です。
 
 ## 使い方
 
@@ -34,6 +40,22 @@ done
 
 以降は Claude Code を起動するだけでどのプロジェクトからでもスキルが使える。
 
+### Codex に登録する
+
+Codex は既存の `~/.codex/skills/.system` を残したまま、対応スキルだけを個別にリンクする。
+
+```bash
+mkdir -p ~/.codex/skills
+
+for skill in code-review pr-summary sim-use grilling commit-plan; do
+  ln -s ~/Project/my-agent-skills/skills/"$skill" ~/.codex/skills/"$skill"
+done
+```
+
+リンク先が既に存在する場合は削除・上書きをせず、内容を確認してから対応すること。
+
+以降は Codex を起動するだけで、5スキルをどのプロジェクトからでも使える。
+
 ### 方法2: 特定のプロジェクトだけで使う
 
 ```bash
@@ -46,4 +68,21 @@ ln -s ~/Project/my-agent-skills/skills .claude/skills
 ```bash
 ls -la ~/.claude/skills    # 確認（グローバル）
 rm ~/.claude/skills        # 削除（グローバル）
+```
+
+```bash
+# Codex のリンク確認（.system が残っていることも確認する）
+ls -la ~/.codex/skills
+readlink ~/.codex/skills/code-review
+readlink ~/.codex/skills/pr-summary
+readlink ~/.codex/skills/sim-use
+readlink ~/.codex/skills/grilling
+readlink ~/.codex/skills/commit-plan
+
+# Codex のリンク削除（対象5スキルのみ）
+rm ~/.codex/skills/code-review
+rm ~/.codex/skills/pr-summary
+rm ~/.codex/skills/sim-use
+rm ~/.codex/skills/grilling
+rm ~/.codex/skills/commit-plan
 ```
