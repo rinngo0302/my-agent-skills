@@ -1,2 +1,4 @@
 .claude
 *.skill
+# code-review-learn が取得したレビュー内容
+skills/code-review-learn/review/
