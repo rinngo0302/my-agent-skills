@@ -7,6 +7,7 @@ Claude Code と Codex で使う個人用スキル集。
 | スキル | 対応環境 | 説明 |
 |--------|----------|------|
 | `code-review` | Claude / Codex | 自分の staged/unstaged 変更または PR の差分を日本語でレビューする |
+| `code-review-learn` | Claude / Codex | 自分の PR に付いたレビューを取得してリポジトリごとにまとめ、`code-review` の観点に加える(`review/` はコミットしない) |
 | `pr-summary` | Claude / Codex | PR本文を生成する（PRは作成せず、本文テキストのみ） |
 | `sim-use` | Claude / Codex | iOS Simulator / Android Emulator・実機を操作する |
 | `grilling` | Claude / Codex | 計画・判断・アイデアを設計ツリーで深掘りする |
@@ -47,7 +48,7 @@ Codex は既存の `~/.codex/skills/.system` を残したまま、対応スキ�
 ```bash
 mkdir -p ~/.codex/skills
 
-for skill in code-review pr-summary sim-use grilling commit-plan; do
+for skill in code-review code-review-learn pr-summary sim-use grilling commit-plan; do
   ln -s ~/Project/my-agent-skills/skills/"$skill" ~/.codex/skills/"$skill"
 done
 ```
